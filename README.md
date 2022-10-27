@@ -1,11 +1,10 @@
-# harmonizer-HS
+# harmonizer
 
 The *harmonizer-HS* repository contains two main tools:
 
-* *Harmonizer.py* which includes the harmonizer transformer, i.e., a Python transformer that encapsulates the neuroHarmonize procedure [1] among the preprocessing steps of a machine learning pipeline. The harmonizer transformer works with the Scikit-learn library, a popular, open-source, well-documented, and easy-to-learn machine learning package that implements a vast number of machine learning algorithms. The harmonizer transformer can be easily included in a pipeline to learn the harmonization procedure parameters on the training data only and apply the harmonization procedure (with parameters learned in the training set) to the test data. This prevented data leakage in the harmonization procedure independently of the chosen validation scheme.
-* *HS.py* contains a function able to compute the *harmonization score* (HS), i.e., a quantitative index to measure the efficacy of data harmonization in reducing the unwanted site effect by using the performance of an XGBoost classifier trained to predict the imaging site from the neuroimaging features. 
+* *Harmonizer.py* which includes the harmonizer transformer, i.e., a Python transformer that encapsulates the *neuroHarmonize* procedure [1] among the preprocessing steps of a machine learning pipeline. The harmonizer transformer works with the *Scikit-learn* library, a popular, open-source, well-documented, and easy-to-learn machine learning package that implements a vast number of machine learning algorithms. The harmonizer transformer can be easily included in a pipeline to learn the harmonization procedure parameters on the training data only and apply the harmonization procedure (with parameters learned in the training set) to the test data. This prevents data leakage in the harmonization procedure independently of the chosen validation scheme.
+* *HS.py* contains a function able to compute the *harmonization score* (HS), i.e., a quantitative index to measure the efficacy of data harmonization in reducing the unwanted site effect by using the performance of an XGBoost classifier trained to predict the imaging site from the MRI-derived features. 
 
-*harmonizer-HS* is available at https://github.com/Imaging-AI-for-Health-virtual-lab/harmonizer-HS.
 Please read the [LICENSE.md](./LICENSE.md) file before using it.
 
 ## Getting Started
@@ -28,15 +27,15 @@ We suggest to create a new virtual environment as follows:
 
 `pip install statsmodels==0.13.2`
 
-To run the examples included in *test.py*, please install pandas library: `conda install pandas=1.5.0`
+To run the examples included in *test.py* file, please install *pandas* library: `conda install pandas=1.5.0`
 
 ### harmonizer
 [Harmonizer.py](./Harmonizer.py) contains the *harmonizer* transformer. It is a *Scikit-learn* custom transformer, that encapsulated the *neuroHarmonize* package.
 
-		class harmonizer(*, features\_names, covariates\_names, eb = True, smooth\_terms = [], smooth\_term\_bounds = (None, None))
+		class harmonizer(*, features_names, covariates_names, eb = True, smooth_terms = [], smooth_term_bounds = (None, None))
 
-		Harmonize MRI-derived features, by removing the imaging site effect using the ComBat algorithm [1]. This transform extends the functionality 
-        of the package neuroHarmonize [2].
+		Harmonize MRI-derived features, by removing the imaging site effect using the ComBat algorithm [1]. 
+		This transform extends the functionality of the package neuroHarmonize [2].
             
         Parameters
         ----------
@@ -66,8 +65,8 @@ To run the examples included in *test.py*, please install pandas library: `conda
             Contains the covariates that present a nonlinear effects on the MRI-derived features
         smooth_term_bounds : tuple
             Contains the boundary knots for nonlinear estimation
-        my_model : TYPE???
-        my_data_adj : numpy array
+        model : dictionary
+        data_adj : numpy N-dimensional array, with shape = (N_samples, N_features)
         
             
         Notes
@@ -97,17 +96,18 @@ To run the examples included in *test.py*, please install pandas library: `conda
         >>> from Harmonizer import harmonizer
         >>> data = pd.read_csv('data.csv')
 
-        >>> NI_features = data.columns.tolist()[3::]
-        >>> covars_features = data.columns.tolist()[0:3]
+        >>> NI_features = data.columns.tolist()[3::] # MRI-derived features
+        >>> covars_features = data.columns.tolist()[0:3] # covariates features
         >>> harm = harmonizer(feature_names = NI_features, covariates_names = covars_features, eb = True, smooth_terms = ["Age"], smooth_term_bounds=(0, 100))
         >>> X_train, X_test = train_test_split(data, test_size=0.20, random_state=42)
         >>> harm.fit_transform(X_train)
         >>> test_data_adj = harm.transform(X_test)
 
 ### HS
-[HS.py](./HS.py) contains the *HS* function. BLA bLA BLA
+[HS.py](./HS.py) contains the *HS* function. The harmonization score (HS)is a quantitative index to measure the efficacy of data harmonization in reducing the unwanted site effect by using the performance of an XGBoost classifier trained to predict the imaging site from the MRI-derived features. Specifically, training an XGBoost classifier through N=10 repetitions of a stratified 5-fold CV, we estimated the average balanced accuracy. The statistical significance of prediction performance was determined via permutation analysis. Thus, 500 new models were created using a random permutation of the target labels (i.e., the imaging site), such that the explanatory MRI-derived variables were dissociated from their corresponding imaging site to simulate the null distribution of the performance measure against which the observed value was tested. Average balanced accuracy was considered significant when the p-value computed using permutation tests was < 0.05. Then, we defined the harmonization score (HS) to measure the efficacy of harmonization in reducing the site effect as HS = -1/log10(p) if p != 0, otherwise HS = 0, where p is the p-value resulting from the permutation test. HS assumes values in the range [0, +∞[, with high values indicating more effective harmonization. 
 
-	def HS(data, MRI\_features, harmonization = False, covars\_features = [], smooth\_terms = [], smooth\_term\_bounds=(None, None))
+
+	def HS(data, MRI_features, harmonization = False, covars_features = [], smooth_terms = [], smooth_term_bounds=(None, None))
 
     Compute the harmonization score (HS) of MRI-derived features.
     
@@ -144,14 +144,14 @@ To run the examples included in *test.py*, please install pandas library: `conda
     
  
 ## Testing
-The file [test.py](./test.py) uses the *harmonizer* transformer and computes the *HS* in different configurations. It uses the file [data.csv](./data.csv), which includes the MRI-derived fractal descriptors of healthy subjects belonged the [*International Consortium for Brain Mapping (ICBM)*](http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html), [*Nathan Kline Institute - Rockland Sample Pediatric Multimodal Imaging Test-Retest Sample (NKI2)*](http://fcon_1000.projects.nitrc.org/indi/CoRR/html/nki_2.html), and [*Information eXtraction from Images (IXI)*](https://brain-development.org/ixi-dataset/) international and public studies. A detail descritption of neuroimaging fractal descriptors and how to compute them has been reported in our previous studies [2-6].
+The file [test.py](./test.py) uses the *harmonizer* transformer and computes the *HS* in different configurations (details within [test.py](./test.py) code). It uses the file [data.csv](./data.csv), which includes the MRI-derived fractal descriptors of healthy subjects belonged the [*International Consortium for Brain Mapping (ICBM)*](http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html), [*Nathan Kline Institute - Rockland Sample Pediatric Multimodal Imaging Test-Retest Sample (NKI2)*](http://fcon_1000.projects.nitrc.org/indi/CoRR/html/nki_2.html), and [*Information eXtraction from Images (IXI)*](https://brain-development.org/ixi-dataset/) international and public studies. A detail descritption of neuroimaging fractal descriptors and how to compute them has been reported in our previous studies [2-6].
 
 The file [data.csv](./data.csv) contains the following columns:
 
 * SITE: label of each imaging site (i.e., ICBM, NKI2, Guys, HH, IOP (the last three belong to IXI))
 * Age: each subject's age, expressed in years
 * Sex: 0=male; 1=female
-* cerebralGM\_FD,cerebralWM\_FD: fractal dimension (FD) of the cerebral cortical gray matter (GM) and white matter (WM)
+* cerebralGM\_FD, cerebralWM\_FD: fractal dimension (FD) of the cerebral cortical gray matter (GM) and white matter (WM)
 * lh\_cerebralGM\_FD, lh\_cerebralWM\_FD: FD of the left hemisphere of the cerebral cortical GM and WM
 * rh\_cerebralGM\_FD, rh\_cerebralWM\_FD: FD of the right hemisphere of the cerebral cortical GM and WM
 * lh\_frontalGM\_FD, lh\_temporalGM\_FD, lh\_parietalGM\_FD, lh\_occipitalGM\_FD: FD of the left cerebral GM lobes	
