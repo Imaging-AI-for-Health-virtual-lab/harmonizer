@@ -41,8 +41,8 @@ class harmonizer( BaseEstimator, TransformerMixin ):
             Contains the covariates that present a nonlinear effects on the MRI-derived features
         smooth_term_bounds : tuple
             Contains the boundary knots for nonlinear estimation
-        my_model : TYPE???
-        my_data_adj : numpy array
+        model : dictionary
+        data_adj : numpy N-dimensional array, with shape = (N_samples, N_features)
         
             
         Notes
@@ -88,9 +88,8 @@ class harmonizer( BaseEstimator, TransformerMixin ):
         self.eb = eb
         self.smooth_terms = smooth_terms
         self.smooth_term_bounds = smooth_term_bounds
-        self.my_model = None
-        self.my_data_adj = None
-        self.my_holdout_data_adj = None
+        self.model = None
+        self.data_adj = None
 
     
     def fit( self, X, y = None ):
@@ -98,18 +97,15 @@ class harmonizer( BaseEstimator, TransformerMixin ):
         data = np.array(data)
         covars = X[self.covariates_names]
         my_model, my_data_adj = harmonizationLearn(data, covars, eb=self.eb, smooth_terms=self.smooth_terms, smooth_term_bounds=self.smooth_term_bounds)
-        self.my_model = my_model
-        self.my_data_adj = my_data_adj
+        self.model = my_model
+        self.data_adj = my_data_adj
         return self 
 
     
-    #Method that describes what we need this transformer to do
     def transform( self, X, y = None ):
-        #print('\n>>>>>>>transform() called. \n')
         data = X[self.feature_names]
         data = np.array(data)
         covars = X[self.covariates_names]
-        my_holdout_data_adj = harmonizationApply(data, covars, self.my_model)
-        #my_holdout_data_adj = X[self.feature_names]
+        my_holdout_data_adj = harmonizationApply(data, covars, self.model)
         return my_holdout_data_adj
 

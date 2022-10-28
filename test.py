@@ -9,7 +9,7 @@ Created on Tue Sep 20 14:02:05 2022
 import numpy as np
 import pandas as pd
 from Harmonizer import harmonizer
-from HS import HS
+from harm_efficacy import efficacy
 from sklearn.model_selection import train_test_split, KFold, cross_validate
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVR
@@ -19,8 +19,7 @@ data = pd.read_csv('data.csv')
 NI_features = data.columns.tolist()[3::]
 covars_features = data.columns.tolist()[0:3]
 
-# ----------------------------- harmonizer ----------------------------- # 
-print('# ----------------------------- harmonizer ----------------------------- #')
+print('# --------------------------------- harmonizer --------------------------------- #')
 ### Harmonize the entire dataset ###
 print('### Harmonize the entire dataset ###')
 harm = harmonizer(feature_names = NI_features, covariates_names = covars_features, eb = True, smooth_terms = ["Age"], smooth_term_bounds=(0, 100))
@@ -45,24 +44,21 @@ harm = harmonizer(feature_names = NI_features, covariates_names = covars_feature
 clf = SVR(kernel='rbf', degree=3, gamma='scale', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=False, max_iter=-1)
 pipe = make_pipeline(harm, clf)
 cv_results = cross_validate(pipe, X, y=y, groups=None, scoring='neg_mean_absolute_error', cv=kf, n_jobs=None, verbose=0, fit_params=None, pre_dispatch='2*n_jobs', return_train_score=True, return_estimator=True)
-print('Average AUROC in the test set:', np.round(np.abs(np.mean(cv_results['test_score'])), 2))
+print('Average MAE in the test set:', np.round(np.abs(np.mean(cv_results['test_score'])), 2))
 print()
 
-# ----------------------------- HS ----------------------------- # 
-print('# ----------------------------- HS ----------------------------- #')
+
+print('# ----------------------------- Harmonization efficacy ----------------------------- #')
 ### Compute the HS of raw data ###
 data = pd.read_csv('data.csv')
-
 NI_features = data.columns.tolist()[3::]
 covars_features = data.columns.tolist()[0:3]
-print('### Compute the HS of raw data ###')
-harm_score = HS(data, NI_features)
-print()
+perm_pvalue, wilcoxon_pvalue = efficacy(data, NI_features, covars_features=covars_features, smooth_terms = ['Age'], smooth_term_bounds=(0, 100))
+print('The permutations test pvalue is', perm_pvalue)
+print('The one-sided Wilcoxon signed-rank test pvalue is', wilcoxon_pvalue)
 
-### Compute the HS of harmonized data ###
-data = pd.read_csv('data.csv')
 
-NI_features = data.columns.tolist()[3::]
-covars_features = data.columns.tolist()[0:3]
-print('### Compute the HS of harmonized data ###')
-harm_score2 = HS(data, NI_features, harmonization = True, covars_features=covars_features, smooth_terms = ['Age'], smooth_term_bounds=(0, 100))
+
+
+
+
