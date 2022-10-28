@@ -48,7 +48,7 @@ def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], 
     >>> data = pd.read_csv('data.csv')
     >>> NI_features = data.columns.tolist()[3::] # MRI-derived features
     >>> covars_features = data.columns.tolist()[0:3] # covariates features
-    >>> harm_data_HS = HS(data, MRI_features, covars_features = ['SITE', 'Age'], smooth_terms = ['Age'], smooth_term_bounds=(0, 100))
+    >>> perm_pvalue, wilcoxon_pvalue = efficacy(data, NI_features, covars_features=covars_features, smooth_terms = ['Age'], smooth_term_bounds=(0, 100))
     
     """
     
