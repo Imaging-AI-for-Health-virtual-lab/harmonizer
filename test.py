@@ -49,7 +49,6 @@ print()
 
 
 print('# ----------------------------- Harmonization efficacy ----------------------------- #')
-### Compute the HS of raw data ###
 data = pd.read_csv('data.csv')
 NI_features = data.columns.tolist()[3::]
 covars_features = data.columns.tolist()[0:3]
