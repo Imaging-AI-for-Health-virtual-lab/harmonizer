@@ -2,7 +2,7 @@
 
 The *harmonizer* repository contains two main tools:
 
-* *Harmonizer.py* which includes the harmonizer transformer, i.e., a Python transformer that encapsulates the *neuroHarmonize* procedure [1] among the preprocessing steps of a machine learning pipeline. The harmonizer transformer works with the *Scikit-learn* library, a popular, open-source, well-documented, and easy-to-learn machine learning package that implements a vast number of machine learning algorithms. The harmonizer transformer can be easily included in a pipeline to learn the harmonization procedure parameters on the training data only and apply the harmonization procedure (with parameters learned in the training set) to the test data. This prevents data leakage in the harmonization procedure independently of the chosen validation scheme.
+* *Harmonizer.py* which includes the harmonizer transformer, i.e., a Python transformer that encapsulates the *neuroHarmonize* procedure [1] among the preprocessing steps of a machine learning pipeline. The harmonizer transformer works with the [*Scikit-learn*](https://scikit-learn.org/stable/) library, a popular, open-source, well-documented, and easy-to-learn machine learning package that implements a vast number of machine learning algorithms. The harmonizer transformer can be easily included in a pipeline to learn the harmonization procedure parameters on the training data only and apply the harmonization procedure (with parameters learned in the training set) to the test data. This prevents data leakage in the harmonization procedure independently of the chosen validation scheme.
 * *harm_efficacy.py* contains a function able to estimate the harmonization efficacy in removing and/or reducing the unwanted imaging site effect from the MRI-derived features. 
 
 Please read the [LICENSE.md](./LICENSE.md) file before using it.
@@ -30,7 +30,7 @@ We suggest to create a new virtual environment as follows:
 To run the examples included in *test.py* file, please install *pandas* library: `conda install pandas=1.5.0`
 
 ### harmonizer
-[Harmonizer.py](./Harmonizer.py) contains the *harmonizer* transformer. It is a *Scikit-learn* custom transformer, that encapsulated the *neuroHarmonize* package.
+The source file [Harmonizer.py](./Harmonizer.py) contains the *harmonizer* transformer. It is a *Scikit-learn* custom transformer, that encapsulated the *neuroHarmonize* package.
 
 		class harmonizer(*, features_names, covariates_names, eb = True, smooth_terms = [], smooth_term_bounds = (None, None))
 
@@ -103,8 +103,8 @@ To run the examples included in *test.py* file, please install *pandas* library:
         >>> harm.fit_transform(X_train)
         >>> test_data_adj = harm.transform(X_test)
 
-### Harmonizatuion efficacy
-[harm_efficacy.py](./harm_efficacy.py) contains the *efficacy* function. it computes the harmonization efficacy in removing and/or reducing the unwanted imaging site effect by using the performance of an XGBoost classifier trained to predict the imaging site from the MRI-derived features. Specifically, training an XGBoost classifier through N=100 repetitions of a stratified 5-fold cross-validation (CV), we estimated the median balanced accuracy in predicting imaging site from MRI-derived features (raw and harmonized with the *harmonizer* within the CV). The removal of the imaging site effect was evaluated by permutations test (5000 permutations). Thus, 5000 new models were created using a random permutation of the target labels (i.e., the imaging site), such that the explanatory MRI-derived variables were dissociated from their corresponding imaging site to simulate the null distribution of the performance measure against which the observed value was tested. If the permutations test p-value is >= 0.05, then the 
+### Harmonization efficacy
+The source file [harm_efficacy.py](./harm_efficacy.py) contains the *efficacy* function. It computes the harmonization efficacy in removing and/or reducing the unwanted imaging site effect by using the performance of an XGBoost classifier trained to predict the imaging site from the MRI-derived features. Specifically, training an XGBoost classifier through N=100 repetitions of a stratified 5-fold cross-validation (CV), we estimated the median balanced accuracy in predicting imaging site from MRI-derived features (raw and harmonized with the *harmonizer* within the CV). The removal of the imaging site effect was evaluated by permutations test (5000 permutations). Thus, 5000 new models were created using a random permutation of the target labels (i.e., the imaging site), such that the explanatory MRI-derived variables were dissociated from their corresponding imaging site to simulate the null distribution of the performance measure against which the observed value was tested. If the permutations test p-value is >= 0.05, then the 
 average balanced accuracy obtatining in predicting imaging site using harmonized MRI-derived features is not different from a chance-level one, and the imaging site effect can be considered removed from MRI-derived features. In some cases, the imaging site effect cannot be completely removed (permutations test p-value < 0.05) but only reduced. We measured the imaging site effect reduction by computing the one-sided Wilcoxon signed-rank between balanced accuracy obtained using raw data and balanced accuracy estimated using harmonized data. If the imaging site effect has been reduced by the harmonization step, then the balanced accuracy obtained using raw should be greater than that estimated using harmonized data, with a one-sided Wilcoxon signed-rank p-value < 0.05.
 
 
