@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Added by CM
+HS.py
+README.pdf
+permutation_scores.csv
+test_env.md
