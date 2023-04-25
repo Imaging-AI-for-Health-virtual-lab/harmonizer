@@ -146,23 +146,26 @@ average balanced accuracy obtatining in predicting imaging site using harmonized
     
  
 ## Testing
-The file [test.py](./test.py) uses the *harmonizer* transformer and computes the harmonization efficacy in different configurations (details within [test.py](./test.py) code). It uses the file [data.csv](./data.csv), which includes the MRI-derived fractal descriptors of healthy subjects belonged the [*International Consortium for Brain Mapping (ICBM)*](http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html), [*Nathan Kline Institute - Rockland Sample Pediatric Multimodal Imaging Test-Retest Sample (NKI2)*](http://fcon_1000.projects.nitrc.org/indi/CoRR/html/nki_2.html), and [*Information eXtraction from Images (IXI)*](https://brain-development.org/ixi-dataset/) international and public studies. A detail descritption of neuroimaging fractal descriptors and how to compute them has been reported in our previous studies [2-6].
+The file [test\_harmonizer.py](./test\_harmonizer.py) uses the *harmonizer* transformer in different configurations and the file [test\_efficacy.py](./test\_efficacy.py) computes the harmonization efficacy. They use the file [multicenter\_CT-FD\_features\_k3\_n25.csv](./multicenter_CT-FD_features_k3_n25.csv), which includes simulated MRI-derived features (i.e., cortical thickness, CT and fractal dimension, FD) and simulated age values of 75 healthy subjects belonged to three different single-center dataset (25 subjects per each single-center dataset). A detail descritption of MRI-derived features and how to compute them has been reported in our previous studies [2-7]. 
 
-The file [data.csv](./data.csv) contains the following columns:
+The file [multicenter\_CT-FD\_features\_k3\_n25.csv](./multicenter_CT-FD_features_k3_n25.csv) contains the following columns:
 
-* SITE: label of each imaging site (i.e., ICBM, NKI2, Guys, HH, IOP (the last three belong to IXI study))
-* Age: each subject's age, expressed in years
-* Sex: 0=male; 1=female
-* cerebralGM\_FD, cerebralWM\_FD: fractal dimension (FD) of the cerebral cortical gray matter (GM) and white matter (WM)
-* lh\_cerebralGM\_FD, lh\_cerebralWM\_FD: FD of the left hemisphere of the cerebral cortical GM and WM
-* rh\_cerebralGM\_FD, rh\_cerebralWM\_FD: FD of the right hemisphere of the cerebral cortical GM and WM
-* lh\_frontalGM\_FD, lh\_temporalGM\_FD, lh\_parietalGM\_FD, lh\_occipitalGM\_FD: FD of the left cerebral GM lobes	
-* rh\_frontalGM\_FD, rh\_temporalGM\_FD, rh\_parietalGM\_FD, rh\_occipitalGM\_FD: FD of the right cerebral GM lobes	
+* SITE: label of each imaging site (i.e., a, b, c, ..., j)
+* age: each subject's simulated age, expressed in years
+* cortex\_CT (FD): CT (or FD) of the cerebral cortical gray matter (GM).
+* lh\_cortex\_CT (FD), rh\_cortex\_CT (FD): CT (or FD) of the left (lh) and right (rh) cerebral cortical GM.
+* lh\_frontal\_cortex_CT (FD), rh\_frontal\_cortex\_CT (FD): CT (or FD) of the left (lh) and right (rh) cerebral cortical GM of the frontal lobe.
+* lh\_temporal\_cortex_CT (FD), rh\_temporal\_cortex\_CT (FD): CT (or FD) of the left (lh) and right (rh) cerebral cortical GM of the temporal lobe.
+* lh\_parietal\_cortex_CT (FD), rh\_parietal\_cortex\_CT (FD): CT (or FD) of the left (lh) and right (rh) cerebral cortical GM of the parietal lobe.
+* lh\_occipital\_cortex_CT (FD), rh\_occipital\_cortex\_CT (FD): CT (or FD) of the left (lh) and right (rh) cerebral cortical GM of the occipital lobe.
 
-From the terminal window (for Unix users) or Anaconda Prompt (for Windows users), run [test.py](./test.py): 
+From the terminal window (for Unix users) or Anaconda Prompt (for Windows users), run [test\_harmonizer.py](./test\_harmonizer.py) and [test\_efficacy.py](./test\_efficacy.py): 
 
-`python test.py`
+`python test_harmonizer.py`
 
+`python test_efficacy.py`
+
+Additional simulated neuroimaging features datasets can be found on Zenodo ([10.5281/zenodo.7848840](https://zenodo.org/deposit/7848840)). *In vivo* neuroimaging features multicenter datasets are freely available at [10.5281/zenodo.7845311](https://zenodo.org/deposit/7845311) and [10.5281/zenodo.7845361](https://zenodo.org/deposit/7845361).
 
 ## Authors
 * [**Chiara Marzi**](https://www.unibo.it/sitoweb/chiara.marzi3/en) - *Post-doctoral reserach fellow at the Institute of Applied Physics "Nello Carrara" (IFAC), National Council of Research (CNR), Sesto Fiorentino, Firenze, Italy.* <c.marzi@ifac.cnr.it>, <chiara.marzi3@unibo.it>
@@ -184,4 +187,6 @@ Bug reports should include sufficient information to reproduce the problem.
 
 [5] Marzi C, Ciulli S, Giannelli M, Ginestroni A, Tessa C, Mascalchi M, Diciotti S. Structural Complexity of the Cerebellum and Cerebral Cortex is Reduced in Spinocerebellar Ataxia Type 2. J Neuroimaging. 2018 Nov;28(6):688-693. doi: 10.1111/jon.12534. Epub 2018 Jul 5. PMID: 29975004.
 
-[6] C. Marzi, M. Giannelli, C. Tessa, M. Mascalchi and S. Diciotti, "Fractal Analysis of MRI Data at 7 T: How Much Complex Is the Cerebral Cortex?," in IEEE Access, vol. 9, pp. 69226-69234, 2021, doi: 10.1109/ACCESS.2021.3077370.
+[6] Marzi C., Giannelli M., Tessa C., Mascalchi M., and Diciotti S., "Fractal Analysis of MRI Data at 7 T: How Much Complex Is the Cerebral Cortex?," in IEEE Access, vol. 9, pp. 69226-69234, 2021, doi: 10.1109/ACCESS.2021.3077370.
+
+[7] Marzi, C., Giannelli, M., Barucci, A., Tessa, C., Mascalchi, M., & Diciotti, S. (2022). Efficacy of MRI data harmonization in the age of machine learning. A multicenter study across 36 datasets. arXiv preprint arXiv:2211.04125.
