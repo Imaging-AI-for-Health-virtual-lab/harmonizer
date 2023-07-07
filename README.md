@@ -108,7 +108,7 @@ The source file [harm_efficacy.py](./harm_efficacy.py) contains the *efficacy* f
 average balanced accuracy obtatining in predicting imaging site using harmonized MRI-derived features is not different from a chance-level one, and the imaging site effect can be considered removed from MRI-derived features. In some cases, the imaging site effect cannot be completely removed (permutations test p-value < 0.05) but only reduced. We measured the imaging site effect reduction by computing the one-sided Wilcoxon signed-rank between balanced accuracy obtained using raw data and balanced accuracy estimated using harmonized data. If the imaging site effect has been reduced by the harmonization step, then the balanced accuracy obtained using raw should be greater than that estimated using harmonized data, with a one-sided Wilcoxon signed-rank p-value < 0.05.
 
 
-	def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], smooth_term_bounds=(None, None)):
+	def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], smooth_term_bounds=(None, None), covar_cat = None):
     
     Compute the harmonization efficacy
        
@@ -124,6 +124,8 @@ average balanced accuracy obtatining in predicting imaging site using harmonized
         Contains the covariates that present a nonlinear effects on the MRI-derived features. For example, age presents a nonlinear relationship with most of the brain MRI-derived features.
     smooth_term_bounds : tuple, default = (None, None)
         Controls the boundary knots for nonlinear estimation. You should specify boundaries that contain the limits of the entire dataset, including the test data
+    covar_cat : list, default = None
+        Labels to constrain permutation within groups, i.e. y values are permuted among samples with the same group identifier. When not specified, y values are permuted among all samples (details in scikit-learn permutation_test_score page).
         
     Output
     --------
@@ -146,9 +148,9 @@ average balanced accuracy obtatining in predicting imaging site using harmonized
     
  
 ## Testing
-The file [test\_harmonizer.py](./test\_harmonizer.py) uses the *harmonizer* transformer in different configurations and the file [test\_efficacy.py](./test\_efficacy.py) computes the harmonization efficacy. They use the file [multicenter\_CT-FD\_features\_k3\_n25.csv](./multicenter_CT-FD_features_k3_n25.csv), which includes simulated MRI-derived features (i.e., cortical thickness, CT and fractal dimension, FD) and simulated age values of 75 healthy subjects belonged to three different single-center dataset (25 subjects per each single-center dataset). A detail descritption of MRI-derived features and how to compute them has been reported in our previous studies [2-7]. 
+The file [test\_harmonizer.py](./test\_harmonizer.py) uses the *harmonizer* transformer in different configurations and the file [test\_efficacy.py](./test\_efficacy.py) computes the harmonization efficacy. They use the file [multicenter\_CT-FD\_features\_k3\_n25_age2.csv](./multicenter_CT-FD_features_k3_n25_age2.csv), which includes simulated MRI-derived features (i.e., cortical thickness, CT and fractal dimension, FD) and simulated age values of 75 healthy subjects belonged to three different single-center dataset (25 subjects per each single-center dataset). The relationship between age and neuroimaging features is quadratic. A detail descritption of MRI-derived features and how to compute them has been reported in our previous studies [2-7]. 
 
-The file [multicenter\_CT-FD\_features\_k3\_n25.csv](./multicenter_CT-FD_features_k3_n25.csv) contains the following columns:
+The file [multicenter\_CT-FD\_features\_k3\_n25_age2.csv](./multicenter_CT-FD_features_k3_n25_age2.csv) contains the following columns:
 
 * SITE: label of each imaging site (i.e., a, b, c, ..., j)
 * age: each subject's simulated age, expressed in years
@@ -165,10 +167,10 @@ From the terminal window (for Unix users) or Anaconda Prompt (for Windows users)
 
 `python test_efficacy.py`
 
-Additional simulated neuroimaging features datasets can be found on Zenodo ([10.5281/zenodo.7848840](https://zenodo.org/deposit/7848840)). *In vivo* neuroimaging features multicenter datasets are freely available at [10.5281/zenodo.7845311](https://zenodo.org/deposit/7845311) and [10.5281/zenodo.7845361](https://zenodo.org/deposit/7845361).
+Additional simulated neuroimaging features datasets can be found on Zenodo ([10.5281/zenodo.8119042](https://zenodo.org/record/8119042#.ZKfD-S9Bz0o), [10.5281/zenodo.7848840](https://zenodo.org/record/7848840#.ZKZ0zy9BzfY)). *In vivo* neuroimaging features multicenter datasets are freely available at [10.5281/zenodo.7845311](https://zenodo.org/record/7845311#.ZKfCry9BxhE) and [10.5281/zenodo.7845361](https://zenodo.org/record/7845361#.ZKVhwi9BzfY).
 
 ## Authors
-* [**Chiara Marzi**](https://www.unibo.it/sitoweb/chiara.marzi3/en) - *Post-doctoral reserach fellow at the Institute of Applied Physics "Nello Carrara" (IFAC), National Council of Research (CNR), Sesto Fiorentino, Firenze, Italy.* <c.marzi@ifac.cnr.it>, <chiara.marzi3@unibo.it>
+* [**Chiara Marzi**](https://www.unibo.it/sitoweb/chiara.marzi3/en) - *Junior Assistant Professor (fixed-term) at the Department of Statistics, Computer Science and Applications "Giuseppe Parenti", University of Florence, Florence, Italy.* <chiara.marzi@unifi.it>, <chiara.marzi3@unibo.it>
 
 * [**Stefano Diciotti**](https://www.unibo.it/sitoweb/stefano.diciotti/en) - *Associate Professor in Biomedical Engineering, Dept. of Electrical, Electronic and Information Engineering – DEI "Guglielmo Marconi", University of Bologna, Bologna, Italy.*  <stefano.diciotti@unibo.it>
 

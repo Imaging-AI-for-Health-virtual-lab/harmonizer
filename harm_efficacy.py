@@ -15,7 +15,7 @@ from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
 from scipy.stats import wilcoxon
 
-def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], smooth_term_bounds=(None, None)):
+def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], smooth_term_bounds=(None, None), covar_cat = None):
     """Compute the harmonization efficacy
     
     Parameters
@@ -29,7 +29,9 @@ def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], 
     smooth_terms : list, default = []
         Contains the covariates that present a nonlinear effects on the MRI-derived features. For example, age presents a nonlinear relationship with most of the brain MRI-derived features.
     smooth_term_bounds : tuple, default = (None, None)
-        Controls the boundary knots for nonlinear estimation. You should specify boundaries that contain the limits of the entire dataset, including the test data
+        Controls the boundary knots for nonlinear estimation. You should specify boundaries that contain the limits of the entire dataset, including the test data.
+    covar_cat : list, default = None
+        Labels to constrain permutation within groups, i.e. y values are permuted among samples with the same group identifier. When not specified, y values are permuted among all samples (details in scikit-learn permutation_test_score page).
         
     Output
     --------
@@ -89,7 +91,7 @@ def efficacy(data, MRI_features, covars_features = ['SITE'], smooth_terms = [], 
     clf = xgb.XGBClassifier(use_label_encoder=False, eval_metric='mlogloss', random_state=rep)
     harm = harmonizer(feature_names = MRI_features, covariates_names = covars_features, eb = True, smooth_terms = smooth_terms, smooth_term_bounds=smooth_term_bounds) 
     pipe = make_pipeline(harm, clf)
-    score_fake, perm_scores, pvalue_fake = permutation_test_score(pipe, X=my_data, y=lc_y, scoring=score, cv=skf, n_permutations=Nperm, n_jobs=-1, random_state=rep)   
+    score_fake, perm_scores, pvalue_fake = permutation_test_score(pipe, X=my_data, y=lc_y, groups=covar_cat, scoring=score, cv=skf, n_permutations=Nperm, n_jobs=-1, random_state=rep)   
     df_perm_scores = pd.DataFrame(data=perm_scores, columns=['Permutation scores'])
     df_perm_scores.to_csv('permutation_scores.csv', index=None)
     perm_p = ((perm_scores >= ave_bal_acc_harm).sum()+1)/(Nperm+1)

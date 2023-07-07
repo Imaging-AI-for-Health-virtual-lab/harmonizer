@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split, KFold, cross_validate
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVR
 
-data = pd.read_csv('multicenter_CT-FD_features_k3_n25.csv')
+data = pd.read_csv('multicenter_CT-FD_features_k3_n25_age2.csv')
 
 NI_features = data.columns.tolist()[2::]
 covars_features = data.columns.tolist()[0:2]
