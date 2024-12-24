@@ -1,4 +1,5 @@
 # harmonizer
+[![DOI](https://zenodo.org/badge/539387936.svg)](https://doi.org/10.5281/zenodo.14550914)
 
 The *harmonizer* repository contains two main tools:
 
